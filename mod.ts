@@ -5,22 +5,28 @@ export interface Debug {
   (fmt: string, ...args: unknown[]): void;
 }
 
-export function debug(namespace: string): Debug {
+function getFinalLogger(namespace: string): Debug | undefined {
   if (debugEnvPermissionStatus.state === "granted") {
     return debug_(namespace);
   } else if (debugEnvPermissionStatus.state === "denied") {
     return () => {};
+  }
+}
+
+export function debug(namespace: string): Debug {
+  const finalLogger = getFinalLogger(namespace);
+  if (finalLogger) {
+    return finalLogger;
   } else {
     // debugEnvPermissionStatus.state is "prompt". Support the
     // possibility of the permission changing later.
     let logger: Debug;
 
     logger = (...args) => {
-      if (debugEnvPermissionStatus.state === "granted") {
-        logger = debug_(namespace);
-        logger(...args);
-      } else if (debugEnvPermissionStatus.state === "denied") {
-        logger = () => {};
+      const finalLogger = getFinalLogger(namespace);
+      if (finalLogger) {
+        logger = finalLogger;
+        finalLogger(...args);
       }
     };
 
