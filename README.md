@@ -1,15 +1,16 @@
-# quiet-debug
+# quiet_debug
 
 This is a wrapper around the Deno [debug](https://github.com/denosaurs/debug)
 library that avoids prompting the user for the DEBUG environment variable access
 permission.
 
-The DEBUG environment variable is only accessed if the user has already given
-permission to it through the `--allow-env=DEBUG`, `--allow-env`, or
-`--allow-all` Deno flags. The user is expected to pass one of these flags if
-they want to see debug messages. This prevents an unnecessary permission prompt
-in the simple case where a Deno script is run from a terminal without any added
-permissions and without the DEBUG environment variable being set.
+Loggers created by this library are only enabled if the DEBUG environment
+variable contains a match for the logger's name and the user has explicitly
+given permission to the DEBUG environment variable through the
+`--allow-env=DEBUG`, `--allow-env`, or `--allow-all` Deno flags. This prevents
+an unnecessary permission prompt in the simple case where a Deno script is run
+from a terminal without any added permissions and without the DEBUG environment
+variable being set.
 
 This library supports the same features as
 [debug](https://github.com/denosaurs/debug). See its documentation for more
